@@ -8,7 +8,7 @@
     "lint": "./node_modules/eslint/bin/eslint.js .",
     "lint:fix": "./node_modules/eslint/bin/eslint.js . --fix",
     "precommit": "lint-staged",
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "test": "test"
   },
   "lint-staged": {
