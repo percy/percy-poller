@@ -1,6 +1,6 @@
 # percy-poller
 
-[![Package Status](https://img.shields.io/npm/v/percy-poller.svg)](https://www.npmjs.com/package/percy-poller)
+[![Package Status](https://img.shields.io/npm/v/@percy/poller.svg)](https://www.npmjs.com/package/@percy/poller)
 
 Utility to poll for a build's status on [Percy](https://percy.io).  
 
@@ -9,7 +9,7 @@ Utility to poll for a build's status on [Percy](https://percy.io).
 **NOTE:** Using percy-poller requires a special token. The normal token provided on a project's settings page will not work.
 
 ```
-npm i -g percy-poller
+npm i -g @percy/poller
 export PERCY_TOKEN=<your_token>  # Handle this token securely - it must be kept secret
 percy-poller --build_id <your_build_id>
 ```
@@ -62,4 +62,4 @@ export PERCY_TOKEN=<your_token>  # Handle this token securely - it must be kept 
 
 ## Testing
 
-Use `yarn test` to run the tests
+Use `yarn test` to run the tests # TODO
