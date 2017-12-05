@@ -6,7 +6,7 @@ Utility to poll for a build's status on [Percy](https://percy.io).
 
 ## Use
 
-Using percy-poller requires a special token.
+** NOTE: ** Using percy-poller requires a special token. The normal token provided on a project's settings page will not work.
 
 ```
 npm i -g percy-poller
