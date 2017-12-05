@@ -17,11 +17,15 @@
       "git add"
     ]
   },
-  "author": "",
+  "author": "Perceptual Inc",
   "license": "MIT",
   "engines": {
     "node": ">=4.0",
     "npm": ">=3.0"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/percy/percy-poller.git"
   },
   "bin": {
     "percy-poller": "./bin/percy-poller.js"
