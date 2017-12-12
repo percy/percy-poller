@@ -10,7 +10,7 @@ Utility to poll for a build's status on [Percy](https://percy.io).
 
 ```
 npm i -g @percy/poller
-export PERCY_TOKEN=<your_token>  # Handle this token securely - it must be kept secret
+export PERCY_FULL_TOKEN=<your_token>  # Handle this token securely - it must be kept secret
 percy-poller --build_id <your_build_id>
 ```
 
@@ -56,7 +56,7 @@ Sample of a full status:
 After making code changes, you'll need to rebuild before they'll take effect.
 ```
 yarn build
-export PERCY_TOKEN=<your_token>  # Handle this token securely - it must be kept secret
+export PERCY_FULL_TOKEN=<your_token>  # Handle this token securely - it must be kept secret
 ./bin/percy-poller.js  --build_id <your_build_id>
 ```
 

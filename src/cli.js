@@ -105,14 +105,14 @@ export function run(argv) {
     return;
   }
 
-  if (!process.env.PERCY_TOKEN) {
+  if (!process.env.PERCY_FULL_TOKEN) {
     // eslint-disable-next-line no-console
-    console.error('PERCY_TOKEN environment variable must be set.');
+    console.error('PERCY_FULL_TOKEN environment variable must be set.');
     process.exitCode = 1;
     return;
   }
 
-  let percyClient = new PercyClient({token: process.env.PERCY_TOKEN});
+  let percyClient = new PercyClient({token: process.env.PERCY_FULL_TOKEN});
   let buildId = argv.build_id;
   getBuild(percyClient, buildId, 0);
 }
