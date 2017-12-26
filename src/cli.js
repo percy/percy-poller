@@ -5,6 +5,11 @@ import yargs from 'yargs';
 const VERSION = require('../package.json').version;
 const MAX_RETRIES_WHEN_PROCESSING = 1000;
 
+function clientInfo() {
+  let version = require('../package.json').version;
+  return `percy-poller/${version}`;
+}
+
 function shouldContinueToPoll(response) {
   return (
     response.body.data.attributes.state == 'pending' ||
@@ -112,7 +117,12 @@ export function run(argv) {
     return;
   }
 
-  let percyClient = new PercyClient({token: process.env.PERCY_FULL_TOKEN});
+  let apiUrl = process.env.PERCY_API; // Optional.
+  let percyClient = new PercyClient({
+    token: process.env.PERCY_FULL_TOKEN,
+    apiUrl,
+    clientInfo: clientInfo(),
+  });
   let buildId = argv.build_id;
   getBuild(percyClient, buildId, 0);
 }
