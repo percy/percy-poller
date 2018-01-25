@@ -24,7 +24,10 @@ function retry(client, buildId, numRetries) {
 }
 
 function handleUnexpectedStatusCode(response) {
-  handleError('Received an unexpected status code: ' + response.statusCode + '\n' + response.body);
+  handleError(
+    `Received an unexpected status code: ${response.statusCode}` +
+      `\nResponse Body: ${JSON.stringify(response.body)}`,
+  );
 }
 
 function unexpectedBuildResponseBody(response) {
@@ -34,18 +37,20 @@ function unexpectedBuildResponseBody(response) {
 function handleUnexpectedBuildResponseBody(response) {
   handleError(
     'Response body in an unexpected format. Expected JSON with data.attributes.' +
-      `\nResponse Body: ${response.body}`,
+      `\nResponse Body: ${JSON.stringify(response.body)}`,
   );
 }
 
 function unexpectedBuildsResponseBody(response) {
-  return !response.body.data || response.body.data == [] || response.body.data[0].type != 'builds';
+  return (
+    !response.body.data || response.body.data.length == 0 || response.body.data[0].type != 'builds'
+  );
 }
 
 function handleUnexpectedBuildsResponseBody(response) {
   handleError(
     'Response body in an unexpected format. Expected JSON with data array of builds.' +
-      `\nResponse Body: ${response.body}`,
+      `\nResponse Body: ${JSON.stringify(response.body)}`,
   );
 }
 
