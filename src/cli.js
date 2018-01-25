@@ -10,11 +10,8 @@ function clientInfo() {
   return `percy-poller/${version}`;
 }
 
-function shouldContinueToPoll(response) {
-  return (
-    response.body.data.attributes.state == 'pending' ||
-    response.body.data.attributes.state == 'processing'
-  );
+function shouldContinueToPoll(buildAttributes) {
+  return buildAttributes.state == 'pending' || buildAttributes.state == 'processing';
 }
 
 function retry(client, buildId, numRetries) {
@@ -22,66 +19,107 @@ function retry(client, buildId, numRetries) {
     // Retry with recursion with retries incremented
     setTimeout(getBuild, 1000, client, buildId, numRetries + 1);
   } else {
-    console.error('Retries exceeded. Exiting.'); // eslint-disable-line no-console
-    process.exitCode = 1;
+    handleError('Retries exceeded. Exiting.');
   }
 }
 
 function handleUnexpectedStatusCode(response) {
-  // eslint-disable-next-line no-console
-  console.error('Received an unexpected status code: ', response.statusCode);
-  console.error(response.body); // eslint-disable-line no-console
-  process.exitCode = 1;
+  handleError(
+    `Received an unexpected status code: ${response.statusCode}` +
+      `\nResponse Body: ${JSON.stringify(response.body)}`,
+  );
 }
 
-function unexpectedResponseBody(response) {
+function unexpectedBuildResponseBody(response) {
   return !response.body.data || !response.body.data.attributes;
 }
 
-function handleUnexpectedResponseBody(response) {
-  // eslint-disable-next-line no-console
-  console.error('Response body in an unexpected format. Expected JSON with data.attributes');
-  // eslint-disable-next-line no-console
-  console.error('Response body: ', response.body);
-  process.exitCode = 1;
+function handleUnexpectedBuildResponseBody(response) {
+  handleError(
+    'Response body in an unexpected format. Expected JSON with data.attributes.' +
+      `\nResponse Body: ${JSON.stringify(response.body)}`,
+  );
 }
 
-function handleResponse(response, client, buildId, numRetries) {
+function unexpectedBuildsResponseBody(response) {
+  return (
+    !response.body.data || response.body.data.length == 0 || response.body.data[0].type != 'builds'
+  );
+}
+
+function handleUnexpectedBuildsResponseBody(response) {
+  handleError(
+    'Response body in an unexpected format. Expected JSON with data array of builds.' +
+      `\nResponse Body: ${JSON.stringify(response.body)}`,
+  );
+}
+
+function pollUntilResult(client, buildId, buildAttributes, numRetries) {
+  if (shouldContinueToPoll(buildAttributes)) {
+    retry(client, buildId, numRetries);
+  } else {
+    let result = JSON.stringify(buildAttributes, null, 2);
+    console.log(result);
+  }
+}
+
+function handleBuildResponse(response, client, buildId, numRetries) {
   if (response.statusCode != 200) {
     handleUnexpectedStatusCode(response);
     return;
   }
 
-  if (unexpectedResponseBody(response)) {
-    handleUnexpectedResponseBody(response);
+  if (unexpectedBuildResponseBody(response)) {
+    handleUnexpectedBuildResponseBody(response);
     return;
   }
 
-  if (shouldContinueToPoll(response)) {
-    retry(client, buildId, numRetries);
-  } else {
-    // Received a 200 with a state that indicates processing is finished.
-    // Could be Finished, Failed, Expired. Log and terminate.
-    let result = JSON.stringify(response.body.data.attributes, null, 2);
-    console.log(result); // eslint-disable-line no-console
+  let buildAttributes = response.body.data.attributes;
+  pollUntilResult(client, buildId, buildAttributes, numRetries);
+}
+
+function handleBuildsResponse(response, client) {
+  if (response.statusCode != 200) {
+    handleUnexpectedStatusCode(response);
+    return;
   }
+
+  if (unexpectedBuildsResponseBody(response)) {
+    handleUnexpectedBuildsResponseBody(response);
+    return;
+  }
+
+  let buildId = response.body.data[0].id;
+  let buildAttributes = response.body.data[0].attributes;
+  pollUntilResult(client, buildId, buildAttributes, 0);
 }
 
 function handleError(error) {
   if (error.message) {
-    console.error(error.message); // eslint-disable-line no-console
+    console.error(error.message);
   } else {
-    console.error(error); // eslint-disable-line no-console
+    console.error(error);
   }
   // TODO: Could retry on 5XXs 3 times before exiting.
   process.exitCode = 1;
+}
+
+function getBuildForSHA(client, project, sha) {
+  let buildPromise = client.getBuilds(project, {sha: sha});
+  buildPromise
+    .then(response => {
+      handleBuildsResponse(response, client);
+    })
+    .catch(function(error) {
+      handleError(error);
+    });
 }
 
 function getBuild(client, buildId, numRetries) {
   let buildPromise = client.getBuild(buildId);
   buildPromise
     .then(response => {
-      handleResponse(response, client, buildId, numRetries);
+      handleBuildResponse(response, client, buildId, numRetries);
     })
     .catch(function(error) {
       handleError(error);
@@ -95,7 +133,6 @@ export function run(argv) {
     .help()
     .alias('help', 'h')
     .options(args.options)
-    .demandOption(['build_id'], 'Please provide a build_id.')
     .epilogue(args.docs).argv;
 
   if (argv.help) {
@@ -111,9 +148,7 @@ export function run(argv) {
   }
 
   if (!process.env.PERCY_FULL_TOKEN) {
-    // eslint-disable-next-line no-console
-    console.error('PERCY_FULL_TOKEN environment variable must be set.');
-    process.exitCode = 1;
+    handleError('PERCY_FULL_TOKEN environment variable must be set.');
     return;
   }
 
@@ -123,6 +158,18 @@ export function run(argv) {
     apiUrl,
     clientInfo: clientInfo(),
   });
-  let buildId = argv.build_id;
-  getBuild(percyClient, buildId, 0);
+
+  if (argv.sha) {
+    if (!process.env.PERCY_PROJECT) {
+      handleError('PERCY_PROJECT environment variable must be set when querying by sha.');
+      return;
+    }
+    getBuildForSHA(percyClient, process.env.PERCY_PROJECT, argv.sha);
+  } else if (argv.build_id) {
+    let buildId = argv.build_id;
+    getBuild(percyClient, buildId, 0);
+  } else {
+    handleError('You must specify either a build_id or sha');
+    return;
+  }
 }

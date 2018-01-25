@@ -5,6 +5,10 @@ export const options = {
     description: 'Percy build id',
     type: 'string',
   },
+  sha: {
+    description: 'Git Commit SHA to find a build for.',
+    type: 'string',
+  },
 };
 
 export const usage = 'Usage: percy-poller --build_id=BUILD_ID';
