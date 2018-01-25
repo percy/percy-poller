@@ -1,6 +1,6 @@
 {
   "name": "@percy/poller",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Poll Percy for a build's status",
   "main": "index.js",
   "scripts": {
