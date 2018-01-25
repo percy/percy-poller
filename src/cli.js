@@ -19,15 +19,14 @@ function retry(client, buildId, numRetries) {
     // Retry with recursion with retries incremented
     setTimeout(getBuild, 1000, client, buildId, numRetries + 1);
   } else {
-    console.error('Retries exceeded. Exiting.'); // eslint-disable-line no-console
+    console.error('Retries exceeded. Exiting.');
     process.exitCode = 1;
   }
 }
 
 function handleUnexpectedStatusCode(response) {
-  // eslint-disable-next-line no-console
   console.error('Received an unexpected status code: ', response.statusCode);
-  console.error(response.body); // eslint-disable-line no-console
+  console.error(response.body);
   process.exitCode = 1;
 }
 
@@ -36,9 +35,7 @@ function unexpectedBuildResponseBody(response) {
 }
 
 function handleUnexpectedBuildResponseBody(response) {
-  // eslint-disable-next-line no-console
   console.error('Response body in an unexpected format. Expected JSON with data.attributes');
-  // eslint-disable-next-line no-console
   console.error('Response body: ', response.body);
   process.exitCode = 1;
 }
@@ -48,9 +45,7 @@ function unexpectedBuildsResponseBody(response) {
 }
 
 function handleUnexpectedBuildsResponseBody(response) {
-  // eslint-disable-next-line no-console
   console.error('Response body in an unexpected format. Expected JSON with data array of builds.');
-  // eslint-disable-next-line no-console
   console.error('Response body: ', response.body);
   process.exitCode = 1;
 }
@@ -60,7 +55,7 @@ function pollUntilResult(client, buildId, buildAttributes, numRetries) {
     retry(client, buildId, numRetries);
   } else {
     let result = JSON.stringify(buildAttributes, null, 2);
-    console.log(result); // eslint-disable-line no-console
+    console.log(result);
   }
 }
 
@@ -97,9 +92,9 @@ function handleBuildsResponse(response, client) {
 
 function handleError(error) {
   if (error.message) {
-    console.error(error.message); // eslint-disable-line no-console
+    console.error(error.message);
   } else {
-    console.error(error); // eslint-disable-line no-console
+    console.error(error);
   }
   // TODO: Could retry on 5XXs 3 times before exiting.
   process.exitCode = 1;
@@ -149,7 +144,6 @@ export function run(argv) {
   }
 
   if (!process.env.PERCY_FULL_TOKEN) {
-    // eslint-disable-next-line no-console
     console.error('PERCY_FULL_TOKEN environment variable must be set.');
     process.exitCode = 1;
     return;
@@ -164,7 +158,6 @@ export function run(argv) {
 
   if (argv.sha) {
     if (!process.env.PERCY_PROJECT) {
-      // eslint-disable-next-line no-console
       console.error('PERCY_PROJECT environment variable must be set when querying by sha.');
       process.exitCode = 1;
       return;
@@ -174,7 +167,6 @@ export function run(argv) {
     let buildId = argv.build_id;
     getBuild(percyClient, buildId, 0);
   } else {
-    // eslint-disable-next-line no-console
     console.error('You must specify either a build_id or sha');
     process.exitCode = 1;
   }
