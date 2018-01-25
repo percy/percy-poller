@@ -19,15 +19,12 @@ function retry(client, buildId, numRetries) {
     // Retry with recursion with retries incremented
     setTimeout(getBuild, 1000, client, buildId, numRetries + 1);
   } else {
-    console.error('Retries exceeded. Exiting.');
-    process.exitCode = 1;
+    handleError('Retries exceeded. Exiting.');
   }
 }
 
 function handleUnexpectedStatusCode(response) {
-  console.error('Received an unexpected status code: ', response.statusCode);
-  console.error(response.body);
-  process.exitCode = 1;
+  handleError('Received an unexpected status code: ' + response.statusCode + '\n' + response.body);
 }
 
 function unexpectedBuildResponseBody(response) {
@@ -35,9 +32,10 @@ function unexpectedBuildResponseBody(response) {
 }
 
 function handleUnexpectedBuildResponseBody(response) {
-  console.error('Response body in an unexpected format. Expected JSON with data.attributes');
-  console.error('Response body: ', response.body);
-  process.exitCode = 1;
+  handleError(
+    'Response body in an unexpected format. Expected JSON with data.attributes.' +
+      `\nResponse Body: ${response.body}`,
+  );
 }
 
 function unexpectedBuildsResponseBody(response) {
@@ -45,9 +43,10 @@ function unexpectedBuildsResponseBody(response) {
 }
 
 function handleUnexpectedBuildsResponseBody(response) {
-  console.error('Response body in an unexpected format. Expected JSON with data array of builds.');
-  console.error('Response body: ', response.body);
-  process.exitCode = 1;
+  handleError(
+    'Response body in an unexpected format. Expected JSON with data array of builds.' +
+      `\nResponse Body: ${response.body}`,
+  );
 }
 
 function pollUntilResult(client, buildId, buildAttributes, numRetries) {
@@ -144,8 +143,7 @@ export function run(argv) {
   }
 
   if (!process.env.PERCY_FULL_TOKEN) {
-    console.error('PERCY_FULL_TOKEN environment variable must be set.');
-    process.exitCode = 1;
+    handleError('PERCY_FULL_TOKEN environment variable must be set.');
     return;
   }
 
@@ -158,8 +156,7 @@ export function run(argv) {
 
   if (argv.sha) {
     if (!process.env.PERCY_PROJECT) {
-      console.error('PERCY_PROJECT environment variable must be set when querying by sha.');
-      process.exitCode = 1;
+      handleError('PERCY_PROJECT environment variable must be set when querying by sha.');
       return;
     }
     getBuildForSHA(percyClient, process.env.PERCY_PROJECT, argv.sha);
@@ -167,7 +164,7 @@ export function run(argv) {
     let buildId = argv.build_id;
     getBuild(percyClient, buildId, 0);
   } else {
-    console.error('You must specify either a build_id or sha');
-    process.exitCode = 1;
+    handleError('You must specify either a build_id or sha');
+    return;
   }
 }
