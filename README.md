@@ -17,7 +17,7 @@ export PERCY_PROJECT=<your_project>  # From your project settings
 percy-poller --build_id <your_build_id>
 
 # Option 2 - Poll by git commit sha:
-percy-poller --sha <your_commit_sha>
+percy-poller --sha <your_full_40_character_commit_sha>
 ```
 
 * If the build is still processing, it will poll until the build is finished. It retries once a second, with a max of 1000 retries.
