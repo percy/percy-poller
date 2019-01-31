@@ -35,7 +35,7 @@
     "lib"
   ],
   "dependencies": {
-    "percy-client": "^2.6.0",
+    "percy-client": "^3.0.3",
     "yargs": "^7.0.2"
   },
   "devDependencies": {
