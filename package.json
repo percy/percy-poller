@@ -43,7 +43,7 @@
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "eslint": "^4.3.0",
-    "eslint-config-prettier": "^2.3.0",
+    "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^2.1.2",
     "husky": "^0.13.2",
     "lint-staged": "^3.3.1",
