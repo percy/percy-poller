@@ -36,7 +36,7 @@
   ],
   "dependencies": {
     "percy-client": "^2.6.0",
-    "yargs": "^7.0.2"
+    "yargs": "^13.2.4"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",
