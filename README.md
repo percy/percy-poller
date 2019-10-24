@@ -2,7 +2,7 @@
 
 [![Package Status](https://img.shields.io/npm/v/@percy/poller.svg)](https://www.npmjs.com/package/@percy/poller)
 
-**Warning**: This project has been deprecated. It has been replaced by webhooks. You can see the docs for our webhooks here: https://docs.percy.io/docs/webhooks
+**Note**: We recommend looking at Percy's webhooks feature as an alternate before adopting this package. You can see the docs for our webhooks here: https://docs.percy.io/docs/webhooks
 
 Utility to poll for a build's status on [Percy](https://percy.io).  
 
