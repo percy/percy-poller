@@ -8,8 +8,9 @@
     "lint": "./node_modules/eslint/bin/eslint.js .",
     "lint:fix": "./node_modules/eslint/bin/eslint.js . --fix",
     "precommit": "lint-staged",
-    "prepare": "npm run build",
-    "test": "test"
+    "prepare": "yarn run snyk-protect && npm run build",
+    "test": "test",
+    "snyk-protect": "snyk protect"
   },
   "lint-staged": {
     "*.{js,css}": [
@@ -36,7 +37,8 @@
   ],
   "dependencies": {
     "percy-client": "^2.6.0",
-    "yargs": "^7.0.2"
+    "yargs": "^7.0.2",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",
@@ -51,5 +53,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "snyk": true
 }
