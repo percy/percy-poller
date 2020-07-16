@@ -13,7 +13,7 @@ Utility to poll for a build's status on [Percy](https://percy.io).
 ```bash
 npm i -g @percy/poller
 export PERCY_FULL_TOKEN=<your_token>  # Handle this token securely - it must be kept secret
-export PERCY_PROJECT=<your_project>  # The project slug from your project settings
+export PERCY_PROJECT=<your_project>  # The org and project slug (e.g. percy/example-percyscript)
 
 # Option 1 - Poll by build_id:
 percy-poller --build_id <your_build_id>
