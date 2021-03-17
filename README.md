@@ -1,8 +1,9 @@
 # percy-poller
 
-[![Package Status](https://img.shields.io/npm/v/@percy/poller.svg)](https://www.npmjs.com/package/@percy/poller)
+## Deprecated
 
-**Note**: We recommend looking at Percy's webhooks feature as an alternate before adopting this package. You can see the docs for our webhooks here: https://docs.percy.io/docs/webhooks
+This package has been deprecated and is not supported. Use the Percy CLI `build:wait` command: https://docs.percy.io/docs/cli-build#percy-buildwait instead. 
+
 
 Utility to poll for a build's status on [Percy](https://percy.io).  
 
